@@ -1,15 +1,12 @@
+import numpy.core.multiarray
 import cv2
 import sys
 from embed import embedder
+#from pose_estimator import pose_estimator
+import face_recognition
 
-def face_detect_dnn():
-
-    # default input is set to acccess the user's webcam
-    cam_input = 0
-
-    # check if any other camera is selected to be used
-    if len(sys.argv) > 1:
-        cam_input = sys.argv[1]
+# Detects a face via a specified camera input and returns a 128d embedding of the face.
+def face_detect_dnn_register(camera_input):
 
     DNN_model_path = "face_recognition/src/deploy.prototxt"
     caffe_model_path = "face_recognition/src/res10_300x300_ssd_iter_140000_fp16.caffemodel"
@@ -18,7 +15,7 @@ def face_detect_dnn():
     confidence_threshold = 0.7
 
     # set selected camera as video input
-    source = cv2.VideoCapture(cam_input, cv2.CAP_DSHOW)
+    source = cv2.VideoCapture(camera_input, cv2.CAP_DSHOW)
 
     # window to display input
     cam_window = 'camera input'
@@ -56,11 +53,18 @@ def face_detect_dnn():
                 roi_color = frame[start_x:start_y,end_x:end_y]
                 # ensures the roi exist
                 if roi_color.size > 0:
-                    vec = embedder(roi_color)
-                    print(vec)
-                    cv2.imwrite("roi_color.png", roi_color)
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#                    vec = embedder(roi_color)
+#                    pose_estimator(roi_color)
+                    #print(x_pose_coor, y_pose_coor)
+                    #print(vec)
+                    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    face_landmarks_list = face_recognition.face_landmarks(image)
+                    for face_landmarks in face_landmarks_list:
+                        for facial_feature in face_landmarks.keys():
+                            for value in face_landmarks[facial_feature]:
+                                frame = cv2.circle(frame, value, radius=0, color=(0, 0, 255), thickness=-1)
 
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # TODO: checks for glasses
 
                 # TODO: checks that the user is looking at the camera
@@ -73,4 +77,5 @@ def face_detect_dnn():
     cv2.destroyWindow(cam_window)
 
 if __name__ == '__main__':
-    face_detect_dnn()
+    webcam_code = 0
+    face_detect_dnn_register(webcam_code)
