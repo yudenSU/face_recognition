@@ -8,8 +8,8 @@ import face_recognition
 # Detects a face via a specified camera input and returns a 128d embedding of the face.
 def face_detect_dnn_register(camera_input):
 
-    DNN_model_path = "face_recognition/src/deploy.prototxt"
-    caffe_model_path = "face_recognition/src/res10_300x300_ssd_iter_140000_fp16.caffemodel"
+    DNN_model_path = "src/deploy.prototxt"
+    caffe_model_path = "src/res10_300x300_ssd_iter_140000_fp16.caffemodel"
 
     net = cv2.dnn.readNetFromCaffe(DNN_model_path, caffe_model_path)
     confidence_threshold = 0.7
@@ -50,19 +50,20 @@ def face_detect_dnn_register(camera_input):
 
                 cv2.rectangle(frame, (start_x, start_y), (end_x, end_y), (0, 255, 0))
                 # crops out the range of interest/face
-                roi_color = frame[start_x:start_y,end_x:end_y]
+                roi_color = frame[start_y:end_y,start_x:end_x]
                 # ensures the roi exist
                 if roi_color.size > 0:
 #                    vec = embedder(roi_color)
 #                    pose_estimator(roi_color)
                     #print(x_pose_coor, y_pose_coor)
                     #print(vec)
-                    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    image = cv2.cvtColor(roi_color, cv2.COLOR_BGR2GRAY)
                     face_landmarks_list = face_recognition.face_landmarks(image)
                     for face_landmarks in face_landmarks_list:
                         for facial_feature in face_landmarks.keys():
                             for value in face_landmarks[facial_feature]:
-                                frame = cv2.circle(frame, value, radius=0, color=(0, 0, 255), thickness=-1)
+                                roi_color = cv2.circle(roi_color, value, radius=0, color=(0, 0, 255), thickness=-1)
+                    cv2.imwrite("roi.png", roi_color)
 
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # TODO: checks for glasses
