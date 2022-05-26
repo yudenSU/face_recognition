@@ -4,7 +4,7 @@ import cv2
 import face_recognition
 
 def pose_estimator(image):
-    image_height, image_width, imgage_colour = image.shape
+    image_height, image_width, image_colour = image.shape
     face_coor_2d = []
     face_coor_3d = []
 
