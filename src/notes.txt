@@ -1,0 +1,9 @@
+make roi based of nose
+use this nose based roi to detect eye distance, maybe eyebrow shape, and other factors such as jaw structure
+ensure that the above value is returned with an approximation to make it evened out more
+use this as a hash value
+scramble vector based on hash value -> mimic someting like linear probing for vector scrambling
+
+or 
+
+compare facial feature via length comparisons
