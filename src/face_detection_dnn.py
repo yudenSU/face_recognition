@@ -41,7 +41,7 @@ def face_detect_dnn_register(camera_input):
         # Run a model
         net.setInput(camera_input_blob)
         detected_faces = net.forward()
-
+        roi_exist = False 
         for i in range(detected_faces.shape[2]):
             confidence = detected_faces[0, 0, i, 2]
             if confidence > confidence_threshold:
@@ -59,14 +59,15 @@ def face_detect_dnn_register(camera_input):
 #                    pose_estimator(roi_color)
                     #print(x_pose_coor, y_pose_coor)
                     #print(vec)
-
-                    if pose_estimator(frame, roi_color):
+                    image = cv2.cvtColor(roi_color, cv2.COLOR_BGR2GRAY)
+                    face_landmarks_list = face_recognition.face_landmarks(image)
+                    if pose_estimator(frame, roi_color, face_landmarks_list):
                         roi_color = cv2.resize(roi_color, (50,50), interpolation = cv2.INTER_AREA)
                         cv2.imwrite("roi.png", roi_color)
 
-#                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    #hash here?
 
-        label = "Face detection"
+        label = f"ROI size of x is {end_x - start_x}, size of {end_y - start_y}"
         cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
         cv2.imshow(cam_window, frame)
 

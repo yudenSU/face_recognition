@@ -2,8 +2,9 @@
 import numpy as np
 import cv2
 import face_recognition
+from bucket import bucket
 
-def pose_estimator(frame, roi_color):
+def pose_estimator(frame, roi_color, face_landmarks_list):
     image = cv2.cvtColor(roi_color, cv2.COLOR_BGR2GRAY)
 
     # 3d model for pose estimation
@@ -66,7 +67,7 @@ def pose_estimator(frame, roi_color):
                 
         delta_x = right_eye_x - left_eye_x
         delta_y = right_eye_y - left_eye_y
-                        
+     
         # Slope of line formula
         tilt = np.arctan(delta_y / delta_x) 
                         
